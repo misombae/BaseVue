@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia';
 import { RouteLocationNormalized } from 'vue-router';
-
+import _ from 'lodash';
+import { useRoute, useRouter } from 'vue-router';
 const whiteList = ['Redirect', 'login'];
-
+const route = useRoute();
+const router = useRouter();
 export type RouteItem = Partial<RouteLocationNormalized> & {
   //fullPath: string;
   // path: string;
@@ -19,7 +21,6 @@ export type ITabsViewState = {
   tabsList: RouteItem[]; // 标签页
 };
 
-//保留固定路由
 function retainAffixRoute(list: any[]) {
   return list.filter((item) => item?.meta?.affix ?? false);
 }
@@ -29,19 +30,26 @@ export const useTabsViewStore = defineStore({
   state: (): ITabsViewState => ({
     tabsList: [],
   }),
+  persist: true,
   getters: {},
   actions: {
-    initTabs(route:any) {
-      this.tabsList = route;
+    initTab(route:any) {
+      //this.tabsList = route;
     },
-    addTabs(route:any): boolean {
-      //if (whiteList.includes(route.name)) return false;
-      //const isExists = this.tabsList.some((item) => item.path == route.path);
-      //if (!isExists) {
+    addTab(route:any) {
+      const index = this.tabsList.findIndex((item) => item.path == route.path && item.name == route.name);
+      if (index==-1) {
         this.tabsList.push(route);
-      //}
-      return true;
+        router.push({
+          path: route.path, 
+          name: route.name
+        }); 
+      }
     },
+    closeTab(route: any) {
+      const index = this.tabsList.findIndex((item) => item.path == route.path && item.name == route.name);
+      this.tabsList.splice(index, 1)
+    }
     // closeLeftTabs(route) {
     //   // 关闭左侧
     //   const index = this.tabsList.findIndex((item) => item.fullPath == route.fullPath);

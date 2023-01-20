@@ -45,13 +45,13 @@ export default defineComponent({
           menuOptions.value.push( getMenu(a,childrenList) );
         });//forEach
       });
+      tabsViewStore.addTab({ "path": 'test' , "name": 'test'})
     });
 
     const tabsViewStore = useTabsViewStore();
     const clickMenuItem = (key: string, menu: any) => {
       const clickMenuPath =  { "path": menu.path , "name": menu.name }
-      console.log(clickMenuPath)
-      tabsViewStore.addTabs(clickMenuPath)
+      tabsViewStore.addTab(clickMenuPath)
     }
     
     return {
